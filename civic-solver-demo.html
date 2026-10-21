@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Civic Solver</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    /* ── Palette ── */
+    --bg: #f5f4f0;          /* warm off-white */
+    --white: #ffffff;
+    --card: #fdfcfa;        /* cards slightly warmer than pure white */
+
+    /* Slate scale — slightly warmer */
+    --s50:  #faf9f7; --s100: #f0ede8; --s200: #e4dfd8; --s300: #ccc5bc;
+    --s400: #a09890; --s500: #7a726a; --s600: #5c554e; --s700: #3d3830;
+    --s800: #272320; --s900: #141210;
+
+    /* Brand — deep slate-blue (buttons, links, focus) */
+    --b50:  #e8f4f4; --b100: #d0eaea; --b200: #9fd4d3;
+    --b500: #1a7f7a; --b600: #15706b; --b700: #0f5c58;
+
+    /* Accent — same teal family, slightly warmer */
+    --t400: #2cb5a0; --t500: #22967f; --t600: #1a7a65;
+
+    /* Amber */
+    --a50: #fffbeb; --a100: #fef3c7; --a200: #fde68a; --a700: #b45309; --a800: #92400e;
+
+    /* Green */
+    --g50: #f0fdf4; --g200: #bbf7d0; --g700: #15803d;
+
+    /* Violet — replaced with deep teal (kept var name for compat) */
+    --v50: #e8f4f4; --v200: #9fd4d3; --v700: #0f5c58;
+
+    /* Red */
+    --r50: #fef2f2; --r200: #fecaca; --r700: #b91c1c;
+
+    /* Radius + shadow */
+    --rsm: 10px; --rmd: 14px; --rlg: 20px; --rxl: 26px;
+    --ssm: 0 1px 4px rgba(20,18,16,.06), 0 1px 2px rgba(20,18,16,.04);
+    --smd: 0 6px 20px rgba(20,18,16,.10);
+    --slg: 0 16px 48px rgba(20,18,16,.13);
+
+    /* Gradient stops */
+    --grad-hero-start: #e8f4f3;
+    --grad-hero-end:   #f5f4f0;
+  }
+
+  html { -webkit-font-smoothing: antialiased; }
+
+  body {
+    background: linear-gradient(145deg, #eaf4f3 0%, #eff6f5 20%, #f5f4f0 55%, #f0f4ee 100%);
+    background-attachment: fixed;
+    color: var(--s900);
+    font-family: 'Inter', system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(245,244,240,.82);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border-bottom: 1px solid rgba(180,170,158,.25);
+    padding: 14px 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-logo {
+    font-size: 18px; font-weight: 900; letter-spacing: -.5px;
+    background: linear-gradient(135deg, var(--b600), var(--v700));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .nav-back { background: none; border: none; cursor: pointer; color: var(--s500); font-size: 14px; font-weight: 600; padding: 6px 10px; border-radius: var(--rsm); transition: all .15s; font-family: inherit; }
+  .nav-back:hover { color: var(--s900); background: var(--s100); }
+  .nav-sep { color: var(--s300); }
+
+  /* SCREENS */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .container { max-width: 640px; margin: 0 auto; padding: 48px 20px 80px; }
+
+  /* HOME */
+  .hero { text-align: center; margin-bottom: 40px; }
+  .hero h1 {
+    font-size: 52px; font-weight: 900; letter-spacing: -2.5px; line-height: 1.02;
+    background: linear-gradient(145deg, var(--s900) 40%, var(--b600) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p { margin-top: 14px; font-size: 18px; color: var(--s500); line-height: 1.5; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rxl);
+    padding: 32px;
+    box-shadow: var(--ssm), 0 0 0 0.5px rgba(180,170,158,.15);
+  }
+
+  .form-label { display: block; font-size: 13px; font-weight: 700; color: var(--s600); margin-bottom: 8px; }
+  .form-group { margin-bottom: 22px; }
+
+  textarea, input[type=text] {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--s200); border-radius: var(--rmd);
+    font-size: 15px; font-family: inherit; color: var(--s900); background: var(--white);
+    outline: none; transition: border-color .15s, box-shadow .15s; line-height: 1.6;
+  }
+  textarea:focus, input[type=text]:focus { border-color: var(--b500); box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+  textarea { resize: none; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+  .chip { font-size: 12px; padding: 6px 13px; border-radius: 100px; border: 1px solid var(--s200); background: var(--white); color: var(--s600); cursor: pointer; transition: all .15s; }
+  .chip:hover { border-color: var(--b200); color: var(--b700); background: var(--b50); }
+
+  .photo-area { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border: 1.5px dashed var(--s300); border-radius: var(--rmd); background: var(--s50); color: var(--s500); font-size: 14px; cursor: pointer; transition: all .15s; width: fit-content; }
+  .photo-area:hover { border-color: var(--b500); color: var(--b600); background: var(--b50); }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 15px 32px;
+    background: linear-gradient(135deg, var(--b600) 0%, var(--b700) 100%);
+    color: var(--white);
+    font-size: 16px; font-weight: 700; font-family: inherit;
+    border: none; border-radius: var(--rmd);
+    cursor: pointer; transition: all .2s;
+    box-shadow: 0 4px 14px rgba(21,112,107,.35);
+    width: 100%; letter-spacing: -.1px;
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--b700) 0%, #0a4a46 100%);
+    box-shadow: 0 6px 20px rgba(21,112,107,.45);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled { background: var(--s200); color: var(--s400); box-shadow: none; cursor: not-allowed; transform: none; }
+
+  /* API KEY BANNER */
+  .api-banner { margin-bottom: 20px; padding: 14px 18px; background: #fef9c3; border: 1px solid #fef08a; border-radius: var(--rmd); display: flex; align-items: flex-start; gap: 10px; }
+  .api-banner-icon { font-size: 18px; flex-shrink: 0; }
+  .api-banner-text { font-size: 13px; color: #713f12; line-height: 1.55; }
+  .api-banner-text strong { font-weight: 700; }
+  .api-key-input-wrap { margin-top: 8px; display: flex; gap: 8px; }
+  .api-key-input { flex: 1; padding: 8px 12px; border: 1.5px solid #fde047; border-radius: var(--rsm); font-size: 13px; font-family: inherit; color: var(--s900); background: white; outline: none; }
+  .api-key-input:focus { border-color: #ca8a04; box-shadow: 0 0 0 2px rgba(202,138,4,.15); }
+  .api-key-save { padding: 8px 14px; background: #ca8a04; color: white; font-size: 13px; font-weight: 700; font-family: inherit; border: none; border-radius: var(--rsm); cursor: pointer; transition: all .15s; white-space: nowrap; }
+  .api-key-save:hover { background: #a16207; }
+
+  .how-it-works { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-top: 48px; text-align: center; }
+  .how-step-icon { font-size: 30px; margin-bottom: 10px; }
+  .how-step-title { font-size: 13px; font-weight: 700; color: var(--s700); }
+  .how-step-desc { font-size: 12px; color: var(--s400); margin-top: 4px; line-height: 1.5; }
+  .footer-note { margin-top: 48px; text-align: center; font-size: 11px; color: var(--s400); line-height: 1.6; }
+
+  /* LOADING */
+  .loading-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 28px; }
+  .dots { display: flex; gap: 10px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; background: linear-gradient(135deg, var(--b600), var(--v700)); animation: pulse 1.5s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: .25s; }
+  .dot:nth-child(3) { animation-delay: .5s; }
+  @keyframes pulse { 0%,100% { opacity:.35; transform:scale(.75); } 50% { opacity:1; transform:scale(1); } }
+  .loading-msg { font-size: 18px; font-weight: 600; color: var(--s600); transition: opacity .3s; }
+  .loading-sub { font-size: 13px; color: var(--s400); }
+
+  /* RESULTS */
+  @keyframes slideUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .animate-in { animation: slideUp .4s ease-out; }
+
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .12em; margin-bottom: 8px;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, var(--b600), var(--v700));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-title {
+    font-size: 38px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 28px;
+    color: var(--s900);
+  }
+
+  .summary-card {
+    background: var(--card);
+    border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg);
+    padding: 24px; margin-bottom: 20px;
+    box-shadow: var(--ssm);
+  }
+  .badge-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; font-size: 13px; font-weight: 700; border: 1px solid; }
+  .badge-gov { background: var(--b50); border-color: var(--b200); color: var(--b700); }
+  .badge-private { background: var(--a50); border-color: var(--a200); color: var(--a700); }
+  .badge-reg { background: var(--v50); border-color: var(--v200); color: var(--v700); }
+  .badge-med { background: #fefce8; border-color: #fef08a; color: #854d0e; font-size: 12px; }
+  .badge-low { background: var(--g50); border-color: var(--g200); color: var(--g700); font-size: 12px; }
+  .badge-high { background: var(--r50); border-color: var(--r200); color: var(--r700); font-size: 12px; }
+
+  .meta-label { font-size: 11px; font-weight: 700; color: var(--s400); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
+  .meta-value { font-size: 13px; color: var(--s700); }
+  .sep { border: none; border-top: 1px solid var(--s100); margin: 16px 0; }
+  .meta-row { display: flex; gap: 24px; flex-wrap: wrap; }
+  .meta-col { flex: 1; min-width: 160px; }
+
+  /* RESULT CARD (gov) */
+  .result-card {
+    background: var(--card);
+    border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg); overflow: hidden;
+    margin-bottom: 18px;
+    box-shadow: var(--ssm);
+  }
+  .result-header {
+    padding: 22px 26px;
+    background: linear-gradient(135deg, var(--b600) 0%, var(--v700) 100%);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .result-header-icon { font-size: 36px; }
+  .result-header-text h2 { color: white; font-size: 19px; font-weight: 800; }
+  .result-header-text p { color: var(--b100); font-size: 13px; margin-top: 3px; }
+
+  .why-strip { background: var(--b50); border-bottom: 1px solid var(--b100); padding: 14px 26px; }
+  .why-label { font-size: 12px; font-weight: 700; color: var(--b700); margin-bottom: 4px; }
+  .why-text { font-size: 13px; color: #1e40af; line-height: 1.55; }
+
+  .contact-body { padding: 22px 26px; }
+  .contact-sl { font-size: 11px; font-weight: 700; color: var(--s400); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 14px; }
+  .contact-row { display: flex; align-items: center; gap: 10px; padding: 11px 14px; background: var(--s50); border: 1px solid var(--s200); border-radius: var(--rsm); margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--s700); cursor: pointer; transition: all .15s; text-decoration: none; }
+  .contact-row:hover { background: var(--s100); }
+  .contact-row-arrow { margin-left: auto; font-size: 11px; color: var(--s400); }
+  .contact-meta { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--s100); }
+  .contact-meta p { font-size: 12px; color: var(--s500); margin-bottom: 4px; }
+  .contact-meta strong { color: var(--s700); }
+
+  .what-card {
+    background: var(--card); border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg); padding: 22px 26px; margin-bottom: 18px; box-shadow: var(--ssm);
+  }
+  .what-card h3 { font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+  .what-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 13px; color: var(--s600); line-height: 1.5; }
+  .num-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--b100); color: var(--b700); font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+  .cta-card {
+    background: linear-gradient(135deg, #0d2926 0%, #0f4a45 50%, var(--b600) 100%);
+    border-radius: var(--rlg); padding: 24px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 28px rgba(15,92,88,.28);
+  }
+  .cta-text h3 { color: white; font-size: 16px; font-weight: 800; }
+  .cta-text p { color: rgba(255,255,255,.65); font-size: 13px; margin-top: 4px; }
+  .btn-cta {
+    padding: 12px 22px;
+    background: rgba(255,255,255,.15);
+    backdrop-filter: blur(8px);
+    color: white; font-size: 13px; font-weight: 700; font-family: inherit;
+    border: 1.5px solid rgba(255,255,255,.3);
+    border-radius: var(--rmd); cursor: pointer; white-space: nowrap; transition: all .15s; flex-shrink: 0;
+  }
+  .btn-cta:hover { background: rgba(255,255,255,.25); border-color: rgba(255,255,255,.5); }
+
+  .conf-card {
+    background: var(--card); border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg); padding: 20px 26px; margin-bottom: 18px; box-shadow: var(--ssm);
+  }
+  .conf-bar-wrap { display: flex; align-items: center; gap: 12px; margin: 10px 0 8px; }
+  .conf-bar-bg { flex: 1; height: 8px; background: var(--s100); border-radius: 100px; overflow: hidden; }
+  .conf-bar-fill { height: 100%; background: linear-gradient(90deg, var(--b600), var(--v700)); border-radius: 100px; }
+  .conf-pct { font-size: 14px; font-weight: 800; color: var(--s700); }
+  .conf-text { font-size: 12px; color: var(--s500); line-height: 1.55; }
+
+  /* ── PRIVATE SERVICE CAROUSEL ────────────────────────────────────────────── */
+
+  .carousel-section { margin-bottom: 24px; }
+
+  /* Full-width breakout — escapes the 640px container completely */
+  .carousel-full-bleed {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 24px;
+    padding: 0 24px;
+  }
+
+  /* Nav row lives inside the container, scroll track breaks out */
+  .carousel-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .carousel-counter { font-size: 13px; font-weight: 700; color: var(--s600); margin-left: auto; }
+  .carousel-arrow {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--card); border: 1.5px solid rgba(180,170,158,.35);
+    color: var(--s700); font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s; flex-shrink: 0;
+    box-shadow: var(--ssm);
+  }
+  .carousel-arrow:hover:not(:disabled) { background: var(--b50); border-color: var(--b200); color: var(--b600); }
+  .carousel-arrow:disabled { opacity: .35; cursor: not-allowed; }
+
+  /* Scroll track — full viewport width, horizontal scroll */
+  .carousel-track {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    align-items: stretch;
+  }
+  .carousel-track::-webkit-scrollbar { display: none; }
+
+  /* Thin visible scrollbar on pointer devices so users know they can scroll */
+  @media (hover: hover) {
+    .carousel-track { scrollbar-width: thin; scrollbar-color: rgba(67,97,238,.3) transparent; }
+    .carousel-track::-webkit-scrollbar { display: block; height: 4px; }
+    .carousel-track::-webkit-scrollbar-track { background: transparent; }
+    .carousel-track::-webkit-scrollbar-thumb { background: rgba(67,97,238,.3); border-radius: 100px; }
+  }
+
+  /* Padding sentinels so first/last card align with container */
+  .carousel-track::before,
+  .carousel-track::after {
+    content: '';
+    flex: 0 0 0px;
+  }
+
+  /* ── RICH SERVICE CARD ───────────────────────────────────────────────────── */
+
+  .svc-card {
+    /* Min 300px, max 380px, but grows to fill if few cards */
+    flex: 1 0 300px;
+    max-width: 380px;
+    scroll-snap-align: start;
+    background: var(--card);
+    border: 1.5px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg);
+    overflow: hidden;
+    box-shadow: var(--ssm);
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow .2s, border-color .2s, transform .2s;
+    min-height: 480px;
+  }
+  .svc-card:hover { box-shadow: var(--smd); border-color: rgba(67,97,238,.25); transform: translateY(-2px); }
+  .svc-card.svc-best { border-color: var(--b500); box-shadow: 0 0 0 2px rgba(67,97,238,.15), var(--ssm); }
+
+  .svc-best-strip {
+    background: linear-gradient(90deg, var(--b600), var(--v700));
+    padding: 8px 18px;
+    font-size: 11px; font-weight: 800; color: white;
+    text-transform: uppercase; letter-spacing: .09em;
+    flex-shrink: 0;
+  }
+
+  /* Card header: name + rating */
+  .svc-header { padding: 18px 18px 12px; flex-shrink: 0; }
+  .svc-name { font-size: 17px; font-weight: 800; color: var(--s900); line-height: 1.25; margin-bottom: 6px; }
+  .svc-rating-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .svc-stars { color: #f59e0b; font-size: 15px; letter-spacing: 1px; line-height: 1; }
+  .svc-rating-num { font-size: 13px; font-weight: 700; color: var(--s700); }
+  .svc-review-ct { font-size: 12px; color: var(--s400); }
+  .svc-price { font-size: 13px; font-weight: 700; color: var(--g700); background: var(--g50); border: 1px solid var(--g200); border-radius: 6px; padding: 2px 7px; }
+  .svc-open { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+  .svc-open.open  { background: var(--g50); color: var(--g700); border: 1px solid var(--g200); }
+  .svc-open.closed { background: var(--r50); color: var(--r700); border: 1px solid var(--r200); }
+
+  /* Summary / description */
+  .svc-summary { padding: 0 18px 12px; font-size: 13px; color: var(--s500); line-height: 1.55; flex-shrink: 0; }
+
+  /* Type tags */
+  .svc-tags { padding: 0 18px 12px; display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+  .svc-tag { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 100px; background: var(--s100); color: var(--s600); border: 1px solid var(--s200); }
+
+  /* Detail grid */
+  .svc-details {
+    padding: 12px 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px 16px;
+    border-top: 1px solid var(--s100);
+    border-bottom: 1px solid var(--s100);
+    flex-shrink: 0;
+  }
+  .svc-detail-item {}
+  .svc-detail-label { font-size: 10px; font-weight: 700; color: var(--s400); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .svc-detail-value { font-size: 12px; color: var(--s700); line-height: 1.4; word-break: break-word; }
+  .svc-detail-value a { color: var(--b600); text-decoration: none; font-weight: 600; }
+  .svc-detail-value a:hover { text-decoration: underline; }
+  /* Full-width detail item (spans both columns) */
+  .svc-detail-item.full { grid-column: 1 / -1; }
+
+  /* Hours today */
+  .svc-hours-today { font-size: 11px; color: var(--s500); margin-top: 2px; line-height: 1.4; }
+
+  /* Why box */
+  .svc-why {
+    margin: 12px 18px;
+    background: var(--a50); border: 1px solid var(--a100); border-radius: 10px;
+    padding: 10px 13px; flex-shrink: 0;
+  }
+  .svc-why-label { font-size: 10px; font-weight: 700; color: var(--a700); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .svc-why-text { font-size: 12px; color: var(--a800); line-height: 1.5; }
+
+  /* Action buttons */
+  .svc-actions { display: flex; gap: 8px; padding: 12px 18px 18px; margin-top: auto; flex-shrink: 0; }
+  .svc-btn {
+    flex: 1; padding: 11px 6px;
+    border-radius: var(--rmd); font-size: 13px; font-weight: 700;
+    font-family: inherit; cursor: pointer; text-align: center;
+    transition: all .15s; border: 1.5px solid var(--s200);
+    background: var(--white); color: var(--s700);
+    text-decoration: none; display: flex; align-items: center;
+    justify-content: center; gap: 4px; line-height: 1;
+  }
+  .svc-btn:hover { background: var(--s50); }
+  .svc-btn.svc-btn-primary { background: var(--b600); color: white; border-color: var(--b600); }
+  .svc-btn.svc-btn-primary:hover { background: var(--b700); }
+  .svc-btn.svc-btn-call { background: var(--g50); color: var(--g700); border-color: var(--g200); }
+  .svc-btn.svc-btn-call:hover { background: var(--g200); }
+
+  .empty-card {
+    background: var(--card); border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg); padding: 40px 32px; text-align: center; margin-bottom: 18px;
+  }
+  .empty-card p { font-size: 14px; color: var(--s500); line-height: 1.6; }
+
+  /* SERVICE RESULT PAGE — keep old pills/why-box for tips */
+  .private-why { background: var(--a50); border: 1px solid var(--a200); border-radius: var(--rlg); padding: 18px 22px; display: flex; gap: 14px; margin-bottom: 20px; }
+  .private-why-icon { font-size: 26px; flex-shrink: 0; }
+  .private-why-label { font-size: 12px; font-weight: 700; color: var(--a700); margin-bottom: 4px; }
+  .private-why-text { font-size: 13px; color: var(--a800); line-height: 1.55; }
+  .section-title { font-size: 18px; font-weight: 800; margin-bottom: 14px; }
+
+  .tips-card {
+    background: var(--card); border: 1px solid rgba(180,170,158,.3);
+    border-radius: var(--rlg); padding: 20px 24px; margin-bottom: 18px;
+    box-shadow: var(--ssm);
+  }
+  .tips-card h3 { font-size: 14px; font-weight: 800; margin-bottom: 12px; }
+  .tip { font-size: 13px; color: var(--s600); margin-bottom: 7px; line-height: 1.5; }
+
+  /* EMAIL MODAL */
+  .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(15,23,42,.55); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; animation: fadeIn .2s ease; }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  .modal { background: var(--card); border-radius: var(--rxl); width: 100%; max-width: 600px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: var(--slg); animation: modalIn .25s ease; }
+  @keyframes modalIn { from{transform:translateY(12px);} to{transform:translateY(0);} }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; border-bottom: 1px solid var(--s100); flex-shrink: 0; }
+  .modal-header h2 { font-size: 17px; font-weight: 800; }
+  .modal-header p { font-size: 13px; color: var(--s400); margin-top: 2px; }
+  .modal-close { width: 34px; height: 34px; border-radius: 50%; background: none; border: none; cursor: pointer; color: var(--s500); font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .modal-close:hover { background: var(--s100); color: var(--s900); }
+  .modal-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+  .efl { font-size: 11px; font-weight: 700; color: var(--s400); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 6px; }
+  .efv { padding: 10px 13px; background: var(--s50); border: 1px solid var(--s200); border-radius: var(--rsm); font-size: 13px; color: var(--s700); margin-bottom: 16px; }
+  .ebh { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+  .edit-toggle { font-size: 12px; color: var(--b600); font-weight: 600; background: none; border: none; cursor: pointer; font-family: inherit; }
+  .edit-toggle:hover { color: var(--b700); }
+  .ebt { padding: 14px; background: var(--s50); border: 1px solid var(--s200); border-radius: var(--rsm); font-size: 13px; color: var(--s700); line-height: 1.7; white-space: pre-wrap; margin-bottom: 14px; }
+  .ebe { width: 100%; padding: 14px; border: 1.5px solid var(--b200); border-radius: var(--rsm); font-size: 13px; color: var(--s700); font-family: inherit; line-height: 1.7; resize: none; outline: none; margin-bottom: 14px; background: white; }
+  .ebe:focus { border-color: var(--b500); box-shadow: 0 0 0 3px rgba(59,130,246,.12); }
+  .ediscl { display: flex; align-items: flex-start; gap: 8px; padding: 10px 13px; background: var(--a50); border: 1px solid var(--a200); border-radius: var(--rsm); font-size: 12px; color: var(--a800); line-height: 1.5; }
+  .modal-footer { display: flex; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--s100); flex-shrink: 0; }
+  .btn-outline { flex: 1; padding: 12px; border-radius: var(--rmd); font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; background: white; color: var(--s700); border: 1px solid var(--s200); transition: all .15s; }
+  .btn-outline:hover { background: var(--s50); }
+  .btn-blue {
+    flex: 1; padding: 12px; border-radius: var(--rmd); font-size: 14px; font-weight: 700;
+    font-family: inherit; cursor: pointer;
+    background: linear-gradient(135deg, var(--b600), var(--b700));
+    color: white; border: none; transition: all .15s;
+    box-shadow: 0 3px 10px rgba(21,112,107,.3);
+  }
+  .btn-blue:hover { filter: brightness(1.08); box-shadow: 0 5px 16px rgba(21,112,107,.4); }
+
+  .start-over-wrap { text-align: center; margin-top: 8px; padding-bottom: 20px; }
+  .start-over { background: none; border: none; cursor: pointer; font-size: 13px; color: var(--s400); font-family: inherit; text-decoration: underline; text-underline-offset: 3px; transition: color .15s; }
+  .start-over:hover { color: var(--s700); }
+
+  @media (max-width: 520px) {
+    .hero h1 { font-size: 36px; }
+    .page-title { font-size: 30px; }
+    .how-it-works { grid-template-columns: 1fr; gap: 16px; }
+    .cta-card { flex-direction: column; align-items: flex-start; }
+    .btn-cta { width: 100%; text-align: center; }
+    .svc-card { flex: 1 0 260px; max-width: 300px; }
+    .carousel-full-bleed { padding: 0 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <span style="font-size:20px">🏙️</span>
+  <span class="nav-logo">Civic Solver</span>
+</nav>
+
+<!-- ═══ HOME ═══ -->
+<div class="screen active" id="screen-home">
+  <div class="container">
+    <div class="hero">
+      <h1>What's the problem?</h1>
+      <p>Tell us what's going on.<br>We'll figure out who can help.</p>
+    </div>
+
+    <!-- API KEY BANNER -->
+    <div class="api-banner" id="api-banner">
+      <div class="api-banner-icon">🔑</div>
+      <div class="api-banner-text">
+        <strong>Google API Key required for live results.</strong>
+        This app looks up real businesses and government contacts using Google Places.
+        Paste your key below — it stays in your browser only and is never sent anywhere else.
+        <br><a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#713f12;font-weight:700">Get a free key → console.cloud.google.com</a>
+        <span style="display:block;margin-top:4px;font-size:12px">Enable: <em>Places API (New)</em> and <em>Geocoding API</em> in your project.</span>
+        <div class="api-key-input-wrap">
+          <input type="text" class="api-key-input" id="api-key-input" placeholder="AIza..." />
+          <button class="api-key-save" onclick="saveApiKey()">Save key</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label" for="description">What's the problem?</label>
+        <textarea id="description" rows="4" placeholder="Tell us what's going on. You don't need to know who is responsible."></textarea>
+      </div>
+
+      <div class="form-group" style="margin-top:-8px">
+        <p style="font-size:11px;font-weight:700;color:var(--s400);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px">Try an example</p>
+        <div class="chips">
+          <span class="chip" onclick="useExample('There is a huge pothole on the road outside my apartment','Atlanta, GA')">🕳️ Pothole on the road</span>
+          <span class="chip" onclick="useExample('I have an old couch, broken furniture, and construction debris piled up in my backyard','Atlanta, GA')">🛋️ Junk in my backyard</span>
+          <span class="chip" onclick="useExample('The streetlight outside my house has been out for two weeks','Savannah, GA')">💡 Streetlight is out</span>
+          <span class="chip" onclick="useExample('There is an abandoned car that has been sitting on my street for over a month','Augusta, GA')">🚗 Abandoned vehicle</span>
+          <span class="chip" onclick="useExample('My air conditioner stopped working and it is very hot inside','Athens, GA')">❄️ AC is broken</span>
+          <span class="chip" onclick="useExample('I have a pest problem — there are mice and insects in my home','Macon, GA')">🐛 Pest problem</span>
+          <span class="chip" onclick="useExample('There is a large tree on my property that looks like it might fall','Columbus, GA')">🌳 Dangerous tree</span>
+          <span class="chip" onclick="useExample('Do I need a permit to build a fence in my backyard?','Roswell, GA')">📋 Fence permit question</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="location">📍 Where is this happening?</label>
+        <input type="text" id="location" placeholder="City, GA or ZIP code — e.g., Atlanta, GA or 30301" />
+      </div>
+
+      <div class="form-group">
+        <p class="form-label">📷 Add a photo <span style="font-weight:400;color:var(--s400)">(optional)</span></p>
+        <div class="photo-area" onclick="alert('Photo upload is a visual feature in this demo.')">
+          <span style="font-size:20px">🖼</span><span>Upload photo</span>
+        </div>
+      </div>
+
+      <button class="btn-primary" onclick="handleSubmit()">Find the right solution →</button>
+    </div>
+
+    <div class="how-it-works">
+      <div><div class="how-step-icon">📝</div><div class="how-step-title">Describe it</div><div class="how-step-desc">Write what's wrong. No need to know who's responsible.</div></div>
+      <div><div class="how-step-icon">🔍</div><div class="how-step-title">We classify it</div><div class="how-step-desc">City issue, private service, or regulatory question?</div></div>
+      <div><div class="how-step-icon">✅</div><div class="how-step-title">Take action</div><div class="how-step-desc">Real contacts, real businesses, real next steps.</div></div>
+    </div>
+    <p class="footer-note">Powered by Google Places API. Results are real businesses and departments in your area.</p>
+  </div>
+</div>
+
+<!-- ═══ LOADING ═══ -->
+<div class="screen" id="screen-loading">
+  <div class="container">
+    <div class="loading-wrap">
+      <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+      <div class="loading-msg" id="loading-msg">Understanding your problem…</div>
+      <div class="loading-sub">Looking up real businesses in your area</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULT: GOVERNMENT ═══ -->
+<div class="screen" id="screen-gov">
+  <div class="container">
+    <div class="animate-in">
+      <p class="eyebrow">We found your next step</p>
+      <h1 class="page-title">Here's what to do.</h1>
+
+      <div class="summary-card">
+        <div class="badge-row">
+          <span class="badge badge-gov">🏛️ City responsibility</span>
+          <span class="badge badge-med" id="gov-urgency-badge">🟡 Medium urgency</span>
+        </div>
+        <div class="meta-label">Problem summary</div>
+        <div class="meta-value" id="gov-problem-summary" style="margin-bottom:14px"></div>
+        <div class="sep"></div>
+        <div class="meta-row">
+          <div class="meta-col">
+            <div class="meta-label">You described</div>
+            <div class="meta-value" id="gov-user-description" style="font-style:italic"></div>
+          </div>
+          <div class="meta-col">
+            <div class="meta-label">Location</div>
+            <div class="meta-value" id="gov-location"></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div class="meta-label">Recommended action</div>
+        <div class="meta-value" id="gov-rec-action" style="font-weight:700"></div>
+      </div>
+
+      <!-- Live city dept result -->
+      <div id="gov-dept-card"></div>
+
+      <div class="what-card">
+        <h3>What to include in your report</h3>
+        <div id="gov-what-list"></div>
+      </div>
+
+      <div class="cta-card">
+        <div class="cta-text">
+          <h3>Ready to report this?</h3>
+          <p>We'll draft a professional email for you to review and send.</p>
+        </div>
+        <button class="btn-cta" onclick="openEmailModal()">Draft a Report →</button>
+      </div>
+
+      <div class="conf-card">
+        <div class="meta-label">How confident are we?</div>
+        <div class="conf-bar-wrap">
+          <div class="conf-bar-bg"><div class="conf-bar-fill" id="gov-conf-bar" style="width:90%"></div></div>
+          <span class="conf-pct" id="gov-conf-pct">90%</span>
+        </div>
+        <div class="conf-text" id="gov-conf-text"></div>
+      </div>
+
+      <div class="start-over-wrap"><button class="start-over" onclick="goHome()">Start over with a different problem</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ RESULT: PRIVATE SERVICE ═══ -->
+<div class="screen" id="screen-private">
+  <!-- Top summary section — stays in 640px container -->
+  <div class="container" style="padding-bottom: 0;">
+    <div class="animate-in">
+      <p class="eyebrow">We found your next step</p>
+      <h1 class="page-title">Here's what to do.</h1>
+
+      <div class="summary-card">
+        <div class="badge-row">
+          <span class="badge badge-private">🛠️ Private service</span>
+          <span class="badge badge-low">🟢 Low urgency</span>
+        </div>
+        <div class="meta-label">Problem summary</div>
+        <div class="meta-value" id="priv-problem-summary" style="margin-bottom:14px"></div>
+        <div class="sep"></div>
+        <div class="meta-row">
+          <div class="meta-col">
+            <div class="meta-label">You described</div>
+            <div class="meta-value" id="priv-user-description" style="font-style:italic"></div>
+          </div>
+          <div class="meta-col">
+            <div class="meta-label">Location</div>
+            <div class="meta-value" id="priv-location"></div>
+          </div>
+        </div>
+        <div class="sep"></div>
+        <div class="meta-label">Recommended action</div>
+        <div class="meta-value" id="priv-rec-action" style="font-weight:700"></div>
+      </div>
+
+      <div class="private-why">
+        <div class="private-why-icon">🛠️</div>
+        <div>
+          <div class="private-why-label">Why this is a private-service matter</div>
+          <div class="private-why-text" id="priv-why"></div>
+        </div>
+      </div>
+
+      <!-- Section title + nav controls stay in container -->
+      <div class="carousel-section">
+        <div class="section-title">Local Businesses Near You</div>
+        <div class="carousel-nav">
+          <button class="carousel-arrow" id="carousel-prev" onclick="carouselStep(-1)" disabled aria-label="Previous">&#8592;</button>
+          <button class="carousel-arrow" id="carousel-next" onclick="carouselStep(1)" aria-label="Next">&#8594;</button>
+          <span class="carousel-counter" id="carousel-counter">1 of 1</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAROUSEL — full viewport width breakout -->
+  <div class="carousel-full-bleed">
+    <div class="carousel-track" id="carousel-track">
+      <!-- cards injected here -->
+    </div>
+  </div>
+
+  <!-- Bottom sections — back in container -->
+  <div class="container" style="padding-top: 8px;">
+    <div class="tips-card">
+      <h3>💡 Getting the best deal</h3>
+      <div class="tip">• Call 2–3 providers and compare quotes before committing</div>
+      <div class="tip">• Ask whether pricing includes all hauling, labor, and cleanup</div>
+      <div class="tip">• Check Google Maps reviews for recent feedback</div>
+      <div class="tip">• Ask about same-week or emergency availability if urgent</div>
+    </div>
+
+    <div class="conf-card">
+      <div class="meta-label">How confident are we?</div>
+      <div class="conf-bar-wrap">
+        <div class="conf-bar-bg"><div class="conf-bar-fill" id="priv-conf-bar" style="width:93%"></div></div>
+        <span class="conf-pct" id="priv-conf-pct">93%</span>
+      </div>
+      <div class="conf-text" id="priv-conf-text"></div>
+    </div>
+
+    <div class="start-over-wrap"><button class="start-over" onclick="goHome()">Start over with a different problem</button></div>
+  </div>
+</div>
+
+<!-- ═══ RESULT: REGULATORY ═══ -->
+<div class="screen" id="screen-reg">
+  <div class="container">
+    <div class="animate-in">
+      <p class="eyebrow">We found your next step</p>
+      <h1 class="page-title">Here's what to do.</h1>
+
+      <div class="summary-card">
+        <div class="badge-row">
+          <span class="badge badge-reg">📋 Regulatory / Information</span>
+          <span class="badge badge-low">🟢 Low urgency</span>
+        </div>
+        <div class="meta-label">Problem summary</div>
+        <div class="meta-value" id="reg-problem-summary" style="margin-bottom:14px"></div>
+        <div class="sep"></div>
+        <div class="meta-row">
+          <div class="meta-col">
+            <div class="meta-label">You described</div>
+            <div class="meta-value" id="reg-user-description" style="font-style:italic"></div>
+          </div>
+          <div class="meta-col">
+            <div class="meta-label">Location</div>
+            <div class="meta-value" id="reg-location"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="reg-dept-card"></div>
+
+      <div id="reg-guidance-card"></div>
+
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:12px 16px;background:var(--s100);border-radius:var(--rmd);margin-bottom:18px;font-size:12px;color:var(--s500)">
+        <span>⚠️</span>
+        <span>This is general guidance. Verify current requirements directly with the city or county before starting any work. Ordinances may change.</span>
+      </div>
+
+      <div class="start-over-wrap"><button class="start-over" onclick="goHome()">Start over with a different problem</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ EMAIL MODAL ═══ -->
+<div id="email-modal" style="display:none">
+  <div class="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div><h2>Your Draft Report</h2><p>Review, edit, then send it yourself.</p></div>
+        <button class="modal-close" onclick="closeEmailModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="efl">To</div>
+        <div class="efv" id="email-to"></div>
+        <div class="efl">Subject</div>
+        <div class="efv" id="email-subject"></div>
+        <div>
+          <div class="ebh">
+            <div class="efl" style="margin-bottom:0">Message</div>
+            <button class="edit-toggle" id="edit-toggle-btn" onclick="toggleEdit()">Edit</button>
+          </div>
+          <div class="ebt" id="email-body-display"></div>
+          <textarea class="ebe" id="email-body-edit" rows="12" style="display:none"></textarea>
+        </div>
+        <div class="ediscl"><span>ℹ️</span><span>This email will <strong>not</strong> be sent automatically. Copy it or open your mail app, then send it yourself.</span></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" id="copy-btn" onclick="copyEmail()">Copy email</button>
+        <button class="btn-blue" onclick="openMailClient()">Open in mail app →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPT
+════════════════════════════════════════════════════════════ -->
+<script>
+// ── Config ────────────────────────────────────────────────────────────────────
+
+// Clear any previously saved key so the user can enter a fresh one
+localStorage.removeItem('civic_google_key');
+let GOOGLE_API_KEY = '';
+
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val.startsWith('AIza')) { alert('That doesn\'t look like a valid Google API key. It should start with "AIza".'); return; }
+  GOOGLE_API_KEY = val;
+  localStorage.setItem('civic_google_key', val);
+  hideBanner();
+  alert('✅ Key saved! You\'re all set — describe a problem and hit the button.');
+}
+
+function hideBanner() {
+  const b = document.getElementById('api-banner');
+  if (b) b.style.display = 'none';
+}
+
+// ── Classification (local, instant) ──────────────────────────────────────────
+
+const CLASSIFIERS = [
+  // GOVERNMENT
+  { type:'gov', key:'road',        score: t => kw(t,['pothole','road damage','pavement','asphalt crack','road hazard','road cave']) },
+  { type:'gov', key:'streetlight', score: t => kw(t,['streetlight','street light','light out','lamp post','lamp is out','light has been','light been out']) },
+  { type:'gov', key:'sidewalk',    score: t => kw(t,['sidewalk','pavement crack','curb damage','broken sidewalk']) },
+  { type:'gov', key:'abandoned',   score: t => kw(t,['abandoned car','abandoned vehicle','abandoned truck','parked for weeks','parked for months','hasn\'t moved']) },
+  { type:'gov', key:'dumping',     score: t => kw(t,['illegal dump','dumping on street','dump on public','trash on public','public property trash']) },
+  { type:'gov', key:'sewer',       score: t => kw(t,['sewer','water main','sewage','water leak','flooding street','burst pipe public']) },
+  { type:'gov', key:'park',        score: t => kw(t,['public park','park bench','playground broken','park damage']) },
+  // PRIVATE SERVICE
+  { type:'priv', key:'junk',       score: t => kw(t,['junk','couch','furniture','debris','cleanout','hauling','old mattress','old appliance','clutter','hoard','pile of','trash in backyard','stuff in yard']) },
+  { type:'priv', key:'hvac',       score: t => kw(t,['air conditioner','air conditioning','ac unit','ac is','hvac','furnace','heat pump','heating broken','cooling broken','no cool','no heat','too hot inside','too cold inside']) },
+  { type:'priv', key:'pest',       score: t => kw(t,['pest','mice','mouse','rat','roach','cockroach','termite','insect','ant infestation','bug problem','exterminator']) },
+  { type:'priv', key:'tree',       score: t => kw(t,['tree removal','tree service','cut down tree','fallen tree','tree trimming','tree on property','tree in yard','dangerous tree']) },
+  { type:'priv', key:'plumbing',   score: t => kw(t,['plumb','pipe leak','drain','toilet','faucet drip','water heater','clog','backup in house']) },
+  { type:'priv', key:'lawn',       score: t => kw(t,['lawn','grass','mow','landscap','yard overgrown','weeds','mulch']) },
+  // REGULATORY
+  { type:'reg', key:'permit',      score: t => kw(t,['permit','do i need','can i build','is it legal','allowed to','zoning','ordinance','requirement','how do i get approval','appeal']) },
+];
+
+function kw(text, keywords) {
+  const t = text.toLowerCase();
+  let score = 0;
+  for (const k of keywords) if (t.includes(k)) score += 10;
+  return score;
+}
+
+function classify(description) {
+  let best = null, bestScore = 0;
+  for (const c of CLASSIFIERS) {
+    const s = c.score(description);
+    if (s > bestScore) { bestScore = s; best = c; }
+  }
+  // Default: if nothing matched well, lean private service (junk/general)
+  return best || { type:'priv', key:'junk' };
+}
+
+// ── Issue type meta ───────────────────────────────────────────────────────────
+
+const ISSUE_META = {
+  // GOVERNMENT
+  road:        { label:'Pothole / Road damage', dept:'Public Works', searchQuery:'city public works department', recAction:'Report to your city\'s Public Works department by phone or online.', urgency:'med', conf:92, confText:'Road hazards on public streets are always a Public Works responsibility. Any city in Georgia has a department or contact for this.', what:['Exact street address or nearest cross street','Description of the hazard (size, depth, location in the road)','How long the problem has existed','Photo of the hazard if available'], emailSubjectFn:(loc)=>`Road Hazard Report — Pothole, ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am writing to report a road hazard located in ${loc}.\n\nDetails: ${desc}\n\nThis hazard appears significant and may pose a risk to drivers and cyclists. I would appreciate it if you could arrange an inspection and repair at your earliest convenience.\n\nThank you for your attention to this matter.` },
+  streetlight: { label:'Broken / outaged streetlight', dept:'Public Works / Utilities', searchQuery:'city public works department', recAction:'Report the outage to Public Works, noting the pole location and number.', urgency:'med', conf:87, confText:'Public streetlights are city-owned infrastructure. Any Georgia municipality\'s Public Works department handles streetlight outage reports.', what:['Exact address or intersection near the light','Pole number if visible on the pole','Description (completely dark, flickering, on during the day)','How long it has been out'], emailSubjectFn:(loc)=>`Streetlight Outage Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am writing to report a streetlight outage in ${loc}.\n\nDetails: ${desc}\n\nThe light has been out for an extended period and has created a safety concern at night. Could you please arrange for it to be inspected and repaired?\n\nThank you.` },
+  sidewalk:    { label:'Damaged sidewalk', dept:'Public Works', searchQuery:'city public works department', recAction:'File a sidewalk damage report with Public Works.', urgency:'med', conf:85, confText:'Public sidewalk repairs are managed by the city\'s Public Works department.', what:['Address or block where sidewalk is damaged','Description of the damage','Whether it creates a trip hazard','Photo if available'], emailSubjectFn:(loc)=>`Sidewalk Damage Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am writing to report damaged sidewalk in ${loc}.\n\nDetails: ${desc}\n\nThe damage appears to create a trip hazard and I would appreciate a repair being scheduled. Thank you.` },
+  abandoned:   { label:'Abandoned vehicle', dept:'Police Department', searchQuery:'police department non-emergency', recAction:'Call the police non-emergency line with the vehicle description and location.', urgency:'low', conf:84, confText:'Abandoned vehicles on public streets are handled by local law enforcement. Officers can tag and tow vehicles that meet the abandonment criteria.', what:['Vehicle make, model, and color','License plate if visible','Exact location (address or cross streets)','How long it has been parked there'], emailSubjectFn:(loc)=>`Abandoned Vehicle Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am writing to report a potentially abandoned vehicle in ${loc}.\n\nDetails: ${desc}\n\nThe vehicle has been in the same location for an extended period without being moved. Could you please have an officer assess whether it meets the criteria for abandonment?\n\nThank you.` },
+  dumping:     { label:'Illegal dumping on public property', dept:'Sanitation / Code Enforcement', searchQuery:'city sanitation code enforcement', recAction:'Report to the Sanitation or Code Enforcement department.', urgency:'med', conf:82, confText:'Illegal dumping on public property is handled by city sanitation or code enforcement.', what:['Location of the dumped items','Description of what was dumped','Approximate date it appeared','Photo if available'], emailSubjectFn:(loc)=>`Illegal Dumping Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am reporting illegal dumping on public property in ${loc}.\n\nDetails: ${desc}\n\nCould you please arrange for removal and investigate if possible? Thank you.` },
+  sewer:       { label:'Sewer / water main issue', dept:'Water & Sewer Utilities', searchQuery:'city water sewer utilities department', recAction:'Call the city water utilities department — this may be an emergency.', urgency:'high', conf:88, confText:'Water main breaks and sewer issues on public property are managed by city utilities. These can be urgent.', what:['Address where the issue is occurring','Whether water is visible in the street or yard','Time the issue began','Any unusual smell or color'], emailSubjectFn:(loc)=>`Water/Sewer Issue Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am reporting a potential water or sewer issue in ${loc}.\n\nDetails: ${desc}\n\nThis may require urgent attention. Please send someone to inspect as soon as possible. Thank you.` },
+  park:        { label:'Public park damage', dept:'Parks & Recreation', searchQuery:'city parks recreation department', recAction:'Contact the Parks & Recreation department to report the damage.', urgency:'low', conf:80, confText:'Public park maintenance and damage reports go to the city\'s Parks & Recreation department.', what:['Name or address of the park','Location within the park','Description of the damage','Whether there is a safety hazard'], emailSubjectFn:(loc)=>`Public Park Damage Report — ${loc}`, emailBodyFn:(desc,loc)=>`Hello,\n\nI am reporting damage at a public park in ${loc}.\n\nDetails: ${desc}\n\nCould you please arrange for inspection and repair? Thank you.` },
+  // PRIVATE
+  junk:        { label:'Junk / debris removal', serviceType:'junk removal', searchQuery:'junk removal', recAction:'Contact a local junk removal company to schedule a pickup.', urgency:'low', conf:95, confText:'Junk and debris on private residential property is a private-service job. Local hauling companies handle this everywhere in Georgia.', why:'You described junk, debris, or unwanted items on private property. The city does not remove items from private land — this is handled by local junk removal and hauling companies.' },
+  hvac:        { label:'HVAC / Air conditioning repair', serviceType:'HVAC contractor', searchQuery:'HVAC air conditioning repair', recAction:'Call a licensed local HVAC technician to diagnose and repair your system.', urgency:'med', conf:93, confText:'Residential HVAC repairs are private-property work handled by licensed technicians.', why:'You described a heating or cooling problem inside your home. This is private-property work for a licensed HVAC contractor — not a city service.' },
+  pest:        { label:'Pest control', serviceType:'pest control', searchQuery:'pest control exterminator', recAction:'Contact a licensed local pest control company.', urgency:'med', conf:91, confText:'Residential pest control is a private service handled by licensed exterminators.', why:'Pest infestations in your home are handled by private licensed pest control companies. This is not a city responsibility unless the problem originates from public property.' },
+  tree:        { label:'Tree removal / service', serviceType:'tree service', searchQuery:'tree removal service arborist', recAction:'Hire a local licensed tree service company.', urgency:'med', conf:88, confText:'Tree removal and trimming on private property is handled by private certified arborists and tree services.', why:'Trees on private property are the owner\'s responsibility. Licensed local tree services and arborists handle removal, trimming, and emergency storm work.' },
+  plumbing:    { label:'Plumbing repair', serviceType:'plumber', searchQuery:'plumber plumbing repair', recAction:'Call a licensed local plumber to diagnose and fix the issue.', urgency:'med', conf:90, confText:'Residential plumbing inside private property is handled by licensed local plumbers.', why:'Plumbing issues inside your home or on your private property are handled by licensed local plumbers, not the city.' },
+  lawn:        { label:'Lawn care / landscaping', serviceType:'lawn care', searchQuery:'lawn care landscaping', recAction:'Contact a local lawn care or landscaping company.', urgency:'low', conf:85, confText:'Lawn care and landscaping on private property is handled by private companies.', why:'Lawn maintenance on private property is a private service. Local lawn care companies serve this throughout Georgia.' },
+};
+
+// ── State ─────────────────────────────────────────────────────────────────────
+
+let _desc = '', _loc = '', _emailData = null, _editMode = false;
+let _geocode = null;
+let _carouselIndex = 0;
+let _carouselTotal = 0;
+
+// ── Main submit ───────────────────────────────────────────────────────────────
+
+async function handleSubmit() {
+  _desc = document.getElementById('description').value.trim();
+  _loc  = document.getElementById('location').value.trim();
+
+  if (!_desc) { alert('Please describe the problem.'); return; }
+  if (!_loc)  { alert('Please enter your location.'); return; }
+  if (!GOOGLE_API_KEY) {
+    alert('Please enter your Google API key first (see the yellow box above the form).');
+    return;
+  }
+
+  showScreen('screen-loading');
+  animateLoadingMessages();
+
+  try {
+    // 1. Geocode the location
+    _geocode = await geocodeLocation(_loc);
+
+    // 2. Classify the problem
+    const cls = classify(_desc);
+    const meta = ISSUE_META[cls.key];
+
+    // 3. Fetch live data from Google Places
+    if (cls.type === 'gov') {
+      const places = await searchPlaces(meta.searchQuery + ' ' + _loc, _geocode, 3);
+      showGovResult(cls, meta, places);
+    } else if (cls.type === 'priv') {
+      const places = await searchPlaces(meta.searchQuery + ' near ' + _loc, _geocode, 5);
+      showPrivResult(cls, meta, places);
+    } else {
+      const places = await searchPlaces('city hall planning zoning ' + _loc, _geocode, 2);
+      showRegResult(cls, meta, places);
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Error: ' + err.message + '\n\nIf this says 403 or "API key not valid", make sure:\n1. Places API (New) is enabled in your Google Cloud project\n2. There are no API key restrictions blocking browser requests\n3. Billing is enabled on your Google Cloud project');
+    goHome();
+  }
+}
+
+// ── Google APIs ───────────────────────────────────────────────────────────────
+
+async function geocodeLocation(location) {
+  const body = {
+    textQuery: location + ', Georgia, USA',
+    pageSize: 1
+  };
+  const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': GOOGLE_API_KEY,
+      'X-Goog-FieldMask': 'places.location,places.formattedAddress,places.displayName'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Location lookup failed (${res.status}): ${errText}`);
+  }
+  const data = await res.json();
+  if (!data.places || !data.places.length) {
+    throw new Error('Could not find that location. Try "City, GA" or a ZIP code like "30301".');
+  }
+  const loc = data.places[0].location;
+  return { lat: loc.latitude, lng: loc.longitude };
+}
+
+async function searchPlaces(query, geocode, count) {
+  const body = {
+    textQuery: query,
+    pageSize: count,
+    locationBias: {
+      circle: {
+        center: { latitude: geocode.lat, longitude: geocode.lng },
+        radius: 40000
+      }
+    }
+  };
+
+  const fields = [
+    'places.displayName',
+    'places.formattedAddress',
+    'places.nationalPhoneNumber',
+    'places.internationalPhoneNumber',
+    'places.websiteUri',
+    'places.rating',
+    'places.userRatingCount',
+    'places.businessStatus',
+    'places.regularOpeningHours',
+    'places.currentOpeningHours',
+    'places.googleMapsUri',
+    'places.types',
+    'places.editorialSummary',
+    'places.priceLevel',
+    'places.primaryTypeDisplayName'
+  ].join(',');
+
+  const res = await fetch(`https://places.googleapis.com/v1/places:searchText`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Goog-Api-Key': GOOGLE_API_KEY,
+      'X-Goog-FieldMask': fields
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Google Places API error ${res.status}: ${errText}`);
+  }
+
+  const data = await res.json();
+  return data.places || [];
+}
+
+// ── Result renderers ──────────────────────────────────────────────────────────
+
+function showGovResult(cls, meta, places) {
+  document.getElementById('gov-problem-summary').textContent = meta.label;
+  document.getElementById('gov-user-description').textContent = `"${_desc}"`;
+  document.getElementById('gov-location').textContent = `📍 ${_loc}`;
+  document.getElementById('gov-rec-action').textContent = meta.recAction;
+
+  const ub = document.getElementById('gov-urgency-badge');
+  ub.className = 'badge ' + (meta.urgency === 'high' ? 'badge-high' : meta.urgency === 'med' ? 'badge-med' : 'badge-low');
+  ub.textContent = meta.urgency === 'high' ? '🔴 High urgency' : meta.urgency === 'med' ? '🟡 Medium urgency' : '🟢 Low urgency';
+
+  document.getElementById('gov-conf-bar').style.width = meta.conf + '%';
+  document.getElementById('gov-conf-pct').textContent = meta.conf + '%';
+  document.getElementById('gov-conf-text').textContent = meta.confText;
+
+  const card = document.getElementById('gov-dept-card');
+  if (places.length) {
+    const p = places[0];
+    const phone = p.nationalPhoneNumber || p.internationalPhoneNumber || '';
+    const website = p.websiteUri || '';
+    const address = p.formattedAddress || '';
+    const hours = getHoursLabel(p);
+    const mapsUrl = p.googleMapsUri || '';
+    const name = p.displayName?.text || meta.dept;
+
+    _emailData = {
+      to: '',
+      toDisplay: phone ? `Call ${name} at ${phone}` : name,
+      subject: meta.emailSubjectFn(_loc),
+      body: meta.emailBodyFn(_desc, _loc)
+    };
+
+    card.innerHTML = `
+      <div class="result-card">
+        <div class="result-header">
+          <div class="result-header-icon">🏛️</div>
+          <div class="result-header-text">
+            <h2>${esc(name)}</h2>
+            <p>${esc(meta.dept)}</p>
+          </div>
+        </div>
+        <div class="why-strip">
+          <div class="why-label">Why this is the right place</div>
+          <div class="why-text">${esc(meta.confText)}</div>
+        </div>
+        <div class="contact-body">
+          <div class="contact-sl">Contact</div>
+          ${phone ? `<a class="contact-row" href="tel:${esc(phone)}">
+            <span>📞</span><span>${esc(phone)}</span>
+            <span class="contact-row-arrow">Call →</span>
+          </a>` : ''}
+          ${website ? `<a class="contact-row" href="${esc(website)}" target="_blank" rel="noopener noreferrer">
+            <span>🌐</span><span>${esc(shortenUrl(website))}</span>
+            <span class="contact-row-arrow">Website →</span>
+          </a>` : ''}
+          ${mapsUrl ? `<a class="contact-row" href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer">
+            <span>🗺️</span><span>View on Google Maps</span>
+            <span class="contact-row-arrow">Open →</span>
+          </a>` : ''}
+          <div class="contact-meta">
+            ${address ? `<p><strong>Address:</strong> ${esc(address)}</p>` : ''}
+            ${hours ? `<p style="margin-top:4px"><strong>Hours:</strong> ${esc(hours)}</p>` : ''}
+          </div>
+        </div>
+      </div>
+      ${places.length > 1 ? buildAltGovList(places.slice(1), meta) : ''}
+    `;
+  } else {
+    _emailData = { to:'', toDisplay:'', subject: meta.emailSubjectFn(_loc), body: meta.emailBodyFn(_desc, _loc) };
+    card.innerHTML = `
+      <div class="empty-card">
+        <p>⚠️ We couldn't find a specific department listing for your city in Google Places.<br><br>
+        Search for "<strong>${esc(meta.dept)} ${esc(_loc)}</strong>" on Google Maps to find the direct contact.</p>
+      </div>`;
+  }
+
+  const wl = document.getElementById('gov-what-list');
+  wl.innerHTML = meta.what.map((item,i)=>`<div class="what-item"><div class="num-badge">${i+1}</div>${esc(item)}</div>`).join('');
+
+  showScreen('screen-gov');
+}
+
+function buildAltGovList(places, meta) {
+  if (!places.length) return '';
+  let html = `<div style="margin-bottom:18px"><div class="meta-label" style="margin-bottom:12px">Other contacts found nearby</div>`;
+  for (const p of places) {
+    const name = p.displayName?.text || '';
+    const phone = p.nationalPhoneNumber || '';
+    const website = p.websiteUri || '';
+    const mapsUrl = p.googleMapsUri || '';
+    html += `<div class="result-card" style="margin-bottom:10px">
+      <div class="contact-body" style="padding:16px 22px">
+        <div style="font-size:14px;font-weight:800;color:var(--s900);margin-bottom:10px">${esc(name)}</div>
+        ${phone ? `<a class="contact-row" href="tel:${esc(phone)}"><span>📞</span><span>${esc(phone)}</span><span class="contact-row-arrow">Call →</span></a>` : ''}
+        ${website ? `<a class="contact-row" href="${esc(website)}" target="_blank" rel="noopener noreferrer"><span>🌐</span><span>${esc(shortenUrl(website))}</span><span class="contact-row-arrow">Website →</span></a>` : ''}
+        ${mapsUrl ? `<a class="contact-row" href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer"><span>🗺️</span><span>Google Maps</span><span class="contact-row-arrow">Open →</span></a>` : ''}
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+// ── Private service result with carousel ──────────────────────────────────────
+
+function showPrivResult(cls, meta, places) {
+  document.getElementById('priv-problem-summary').textContent = meta.label;
+  document.getElementById('priv-user-description').textContent = `"${_desc}"`;
+  document.getElementById('priv-location').textContent = `📍 ${_loc}`;
+  document.getElementById('priv-rec-action').textContent = meta.recAction;
+  document.getElementById('priv-why').textContent = meta.why;
+  document.getElementById('priv-conf-bar').style.width = meta.conf + '%';
+  document.getElementById('priv-conf-pct').textContent = meta.conf + '%';
+  document.getElementById('priv-conf-text').textContent = meta.confText;
+
+  const track = document.getElementById('carousel-track');
+  _carouselIndex = 0;
+
+  if (places.length) {
+    _carouselTotal = places.length;
+    track.innerHTML = places.map((p, i) => buildServiceCard(p, i === 0, meta.serviceType)).join('');
+  } else {
+    _carouselTotal = 0;
+    track.innerHTML = `<div class="empty-card" style="min-width:300px"><p>No businesses were returned by Google Places for your exact query.<br><br>Try searching "<strong>${esc(meta.searchQuery)} ${esc(_loc)}</strong>" on Google Maps for current listings.</p></div>`;
+  }
+
+  updateCarouselNav();
+
+  // Sync counter on scroll
+  track.addEventListener('scroll', onCarouselScroll, { passive: true });
+
+  showScreen('screen-private');
+}
+
+function buildServiceCard(place, isBest, serviceType) {
+  const name        = place.displayName?.text || 'Unknown Business';
+  const address     = place.formattedAddress || '';
+  const phone       = place.nationalPhoneNumber || place.internationalPhoneNumber || '';
+  const website     = place.websiteUri || '';
+  const rating      = place.rating ? parseFloat(place.rating).toFixed(1) : null;
+  const reviewCount = place.userRatingCount || 0;
+  const mapsUrl     = place.googleMapsUri || '';
+  const summary     = place.editorialSummary?.text || '';
+  const priceLevel  = formatPriceLevel(place.priceLevel);
+  const primaryType = place.primaryTypeDisplayName?.text || serviceType;
+
+  // Types — filter out noisy/generic ones, show up to 4
+  const rawTypes = (place.types || [])
+    .filter(t => !['point_of_interest','establishment','local_government_office'].includes(t))
+    .slice(0, 4)
+    .map(t => t.replace(/_/g, ' '));
+
+  // Open/closed + today's hours
+  const openInfo = getOpenInfo(place);
+
+  // Today's hours string
+  const todayHours = getTodayHours(place);
+
+  const stars = rating ? renderStars(parseFloat(rating)) : '';
+
+  return `
+    <div class="svc-card${isBest ? ' svc-best' : ''}">
+      ${isBest ? '<div class="svc-best-strip">⭐ Top result near you</div>' : ''}
+
+      <div class="svc-header">
+        <div class="svc-name">${esc(name)}</div>
+        <div class="svc-rating-row">
+          ${rating ? `<span class="svc-stars">${stars}</span><span class="svc-rating-num">${rating}</span><span class="svc-review-ct">(${reviewCount.toLocaleString()} reviews)</span>` : '<span style="font-size:12px;color:var(--s400)">No rating yet</span>'}
+          ${priceLevel ? `<span class="svc-price">${esc(priceLevel)}</span>` : ''}
+          ${openInfo ? `<span class="svc-open ${openInfo.open ? 'open' : 'closed'}">${esc(openInfo.label)}</span>` : ''}
+        </div>
+      </div>
+
+      ${summary ? `<div class="svc-summary">${esc(summary)}</div>` : ''}
+
+      ${rawTypes.length ? `<div class="svc-tags">${rawTypes.map(t => `<span class="svc-tag">${esc(t)}</span>`).join('')}</div>` : ''}
+
+      <div class="svc-details">
+        ${address ? `<div class="svc-detail-item full">
+          <div class="svc-detail-label">📍 Address</div>
+          <div class="svc-detail-value">${esc(address)}</div>
+        </div>` : ''}
+        ${phone ? `<div class="svc-detail-item">
+          <div class="svc-detail-label">📞 Phone</div>
+          <div class="svc-detail-value"><a href="tel:${esc(phone)}">${esc(phone)}</a></div>
+        </div>` : ''}
+        ${priceLevel ? `<div class="svc-detail-item">
+          <div class="svc-detail-label">💰 Price level</div>
+          <div class="svc-detail-value">${esc(priceLevel)}</div>
+        </div>` : ''}
+        ${todayHours ? `<div class="svc-detail-item${!phone && !priceLevel ? ' full' : ''}">
+          <div class="svc-detail-label">� Today's hours</div>
+          <div class="svc-detail-value">${esc(todayHours)}</div>
+        </div>` : ''}
+        ${website ? `<div class="svc-detail-item">
+          <div class="svc-detail-label">🌐 Website</div>
+          <div class="svc-detail-value"><a href="${esc(website)}" target="_blank" rel="noopener noreferrer">${esc(shortenUrl(website))}</a></div>
+        </div>` : ''}
+        ${primaryType ? `<div class="svc-detail-item">
+          <div class="svc-detail-label">🔧 Type</div>
+          <div class="svc-detail-value">${esc(primaryType)}</div>
+        </div>` : ''}
+      </div>
+
+      <div class="svc-why">
+        <div class="svc-why-label">Why this matches</div>
+        <div class="svc-why-text">Found near ${esc(_loc)} on Google Places as a top-rated ${esc(serviceType)} provider.${rating ? ` Rated ${rating}/5 by ${reviewCount.toLocaleString()} customers.` : ''}</div>
+      </div>
+
+      <div class="svc-actions">
+        ${phone ? `<a class="svc-btn svc-btn-call" href="tel:${esc(phone)}">📞 Call</a>` : ''}
+        ${website ? `<a class="svc-btn" href="${esc(website)}" target="_blank" rel="noopener noreferrer">🌐 Website</a>` : ''}
+        ${mapsUrl ? `<a class="svc-btn svc-btn-primary" href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer">📍 Maps</a>` : ''}
+      </div>
+    </div>`;
+}
+
+// ── Carousel controls ─────────────────────────────────────────────────────────
+
+function carouselStep(dir) {
+  const track = document.getElementById('carousel-track');
+  const cards = track.querySelectorAll('.svc-card');
+  if (!cards.length) return;
+
+  _carouselIndex = Math.max(0, Math.min(_carouselTotal - 1, _carouselIndex + dir));
+
+  // Scroll the target card into view
+  cards[_carouselIndex].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+  updateCarouselNav();
+}
+
+function onCarouselScroll() {
+  const track = document.getElementById('carousel-track');
+  const cards = track.querySelectorAll('.svc-card');
+  if (!cards.length) return;
+
+  // Determine which card is most visible
+  const trackLeft = track.getBoundingClientRect().left;
+  let closest = 0, closestDist = Infinity;
+  cards.forEach((card, i) => {
+    const dist = Math.abs(card.getBoundingClientRect().left - trackLeft);
+    if (dist < closestDist) { closestDist = dist; closest = i; }
+  });
+  _carouselIndex = closest;
+  updateCarouselNav();
+}
+
+function updateCarouselNav() {
+  const prevBtn = document.getElementById('carousel-prev');
+  const nextBtn = document.getElementById('carousel-next');
+  const counter = document.getElementById('carousel-counter');
+
+  if (_carouselTotal > 0) {
+    prevBtn.disabled = _carouselIndex <= 0;
+    nextBtn.disabled = _carouselIndex >= _carouselTotal - 1;
+    counter.textContent = `${_carouselIndex + 1} of ${_carouselTotal}`;
+  } else {
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    counter.textContent = '';
+  }
+}
+
+// ── Regulatory result ─────────────────────────────────────────────────────────
+
+function showRegResult(cls, meta, places) {
+  document.getElementById('reg-problem-summary').textContent = 'Permit / regulatory question';
+  document.getElementById('reg-user-description').textContent = `"${_desc}"`;
+  document.getElementById('reg-location').textContent = `📍 ${_loc}`;
+
+  const deptEl = document.getElementById('reg-dept-card');
+  if (places.length) {
+    const p = places[0];
+    const name = p.displayName?.text || 'City Hall';
+    const phone = p.nationalPhoneNumber || '';
+    const website = p.websiteUri || '';
+    const address = p.formattedAddress || '';
+    const mapsUrl = p.googleMapsUri || '';
+    deptEl.innerHTML = `
+      <div class="result-card" style="margin-bottom:18px">
+        <div class="result-header" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+          <div class="result-header-icon">📋</div>
+          <div class="result-header-text">
+            <h2>${esc(name)}</h2>
+            <p>Planning, Zoning & Permits</p>
+          </div>
+        </div>
+        <div class="contact-body">
+          <div class="contact-sl">Contact</div>
+          ${phone ? `<a class="contact-row" href="tel:${esc(phone)}"><span>📞</span><span>${esc(phone)}</span><span class="contact-row-arrow">Call →</span></a>` : ''}
+          ${website ? `<a class="contact-row" href="${esc(website)}" target="_blank" rel="noopener noreferrer"><span>🌐</span><span>${esc(shortenUrl(website))}</span><span class="contact-row-arrow">Website →</span></a>` : ''}
+          ${mapsUrl ? `<a class="contact-row" href="${esc(mapsUrl)}" target="_blank" rel="noopener noreferrer"><span>🗺️</span><span>Google Maps</span><span class="contact-row-arrow">Open →</span></a>` : ''}
+          ${address ? `<div class="contact-meta"><p><strong>Address:</strong> ${esc(address)}</p></div>` : ''}
+        </div>
+      </div>`;
+  } else {
+    deptEl.innerHTML = `<div class="empty-card"><p>Search "<strong>city hall planning zoning ${esc(_loc)}</strong>" on Google Maps to find the correct contact.</p></div>`;
+  }
+
+  document.getElementById('reg-guidance-card').innerHTML = `
+    <div class="what-card" style="margin-bottom:18px">
+      <h3>General guidance for permit questions</h3>
+      <div class="what-item"><div class="num-badge">1</div>Call or visit the local Planning & Zoning office before starting any work.</div>
+      <div class="what-item"><div class="num-badge">2</div>Describe exactly what you want to build or do — they'll tell you what's required.</div>
+      <div class="what-item"><div class="num-badge">3</div>Ask for the requirement in writing (email confirmation) when possible.</div>
+      <div class="what-item"><div class="num-badge">4</div>If you're in an HOA, check their rules too — they may be stricter than the city.</div>
+      <div class="what-item"><div class="num-badge">5</div>Georgia state law may also apply (e.g. the Georgia State Building Code for structural work).</div>
+    </div>`;
+
+  showScreen('screen-reg');
+}
+
+// ── Utility helpers ───────────────────────────────────────────────────────────
+
+/**
+ * Returns { open: bool, label: string } or null.
+ * Prefers currentOpeningHours (real-time) over regularOpeningHours.
+ */
+function getOpenInfo(place) {
+  const src = place.currentOpeningHours || place.regularOpeningHours;
+  if (!src) return null;
+  if (src.openNow !== undefined) {
+    return { open: src.openNow, label: src.openNow ? 'Open now' : 'Closed now' };
+  }
+  return null;
+}
+
+/**
+ * Returns today's hours string, e.g. "Monday: 8:00 AM – 6:00 PM"
+ */
+function getTodayHours(place) {
+  const src = place.currentOpeningHours || place.regularOpeningHours;
+  if (!src) return null;
+  const desc = src.weekdayDescriptions;
+  if (!desc || !desc.length) return null;
+  const today = new Date().getDay(); // 0=Sun
+  const idx = today === 0 ? 6 : today - 1;
+  // Strip the day name prefix for compactness, e.g. "Monday: 9:00 AM – 5:00 PM" -> "9:00 AM – 5:00 PM"
+  const raw = desc[idx] || desc[0];
+  const colonIdx = raw.indexOf(':');
+  return colonIdx !== -1 ? raw.slice(colonIdx + 1).trim() : raw;
+}
+
+/**
+ * Legacy helper kept for gov card compatibility.
+ */
+function getHoursLabel(place) {
+  const info = getOpenInfo(place);
+  if (info) return info.label;
+  const today = getTodayHours(place);
+  return today || null;
+}
+
+/**
+ * Convert Places API priceLevel enum to dollar signs.
+ * API returns: PRICE_LEVEL_FREE, PRICE_LEVEL_INEXPENSIVE, PRICE_LEVEL_MODERATE,
+ *              PRICE_LEVEL_EXPENSIVE, PRICE_LEVEL_VERY_EXPENSIVE
+ */
+function formatPriceLevel(level) {
+  if (!level) return null;
+  const map = {
+    PRICE_LEVEL_FREE: 'Free',
+    PRICE_LEVEL_INEXPENSIVE: '$',
+    PRICE_LEVEL_MODERATE: '$$',
+    PRICE_LEVEL_EXPENSIVE: '$$$',
+    PRICE_LEVEL_VERY_EXPENSIVE: '$$$$',
+  };
+  return map[level] || null;
+}
+
+function renderStars(rating) {
+  const full = Math.floor(rating);
+  const half = (rating % 1) >= 0.4;
+  let s = '';
+  for (let i = 0; i < 5; i++) {
+    if (i < full) s += '★';
+    else if (i === full && half) s += '½';
+    else s += '☆';
+  }
+  return s;
+}
+
+function shortenUrl(url) {
+  try {
+    const u = new URL(url);
+    return u.hostname.replace(/^www\./, '');
+  } catch { return url.substring(0, 40); }
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ── Loading animation ─────────────────────────────────────────────────────────
+
+function animateLoadingMessages() {
+  const msgs = [
+    'Understanding your problem…',
+    'Checking what type of issue this is…',
+    'Looking up real businesses in your area…',
+    'Preparing your next step…'
+  ];
+  let i = 0;
+  const el = document.getElementById('loading-msg');
+  el.textContent = msgs[0];
+  const iv = setInterval(() => {
+    i++;
+    if (i >= msgs.length) { clearInterval(iv); return; }
+    el.style.opacity = 0;
+    setTimeout(() => { el.textContent = msgs[i]; el.style.opacity = 1; }, 250);
+  }, 1600);
+}
+
+// ── Screen navigation ─────────────────────────────────────────────────────────
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  const nav = document.getElementById('nav');
+  if (id === 'screen-home') {
+    nav.innerHTML = '<span style="font-size:20px">🏙️</span><span class="nav-logo">Civic Solver</span>';
+  } else {
+    nav.innerHTML = '<button class="nav-back" onclick="goHome()">← Back</button><span class="nav-sep">|</span><span class="nav-logo">🏙️ Civic Solver</span>';
+  }
+}
+
+function goHome() {
+  closeEmailModal();
+  // Remove scroll listener to avoid leaking
+  const track = document.getElementById('carousel-track');
+  if (track) track.removeEventListener('scroll', onCarouselScroll);
+  showScreen('screen-home');
+}
+
+function useExample(desc, loc) {
+  document.getElementById('description').value = desc;
+  document.getElementById('location').value = loc;
+}
+
+// ── Email modal ───────────────────────────────────────────────────────────────
+
+function openEmailModal() {
+  if (!_emailData) return;
+  _editMode = false;
+  const d = document.getElementById('email-to');
+  d.textContent = _emailData.to || '(Enter the department email — search their website for a contact address)';
+  document.getElementById('email-subject').textContent = _emailData.subject;
+  document.getElementById('email-body-display').textContent = _emailData.body;
+  document.getElementById('email-body-edit').value = _emailData.body;
+  document.getElementById('email-body-display').style.display = '';
+  document.getElementById('email-body-edit').style.display = 'none';
+  document.getElementById('edit-toggle-btn').textContent = 'Edit';
+  document.getElementById('copy-btn').textContent = 'Copy email';
+  document.getElementById('email-modal').style.display = 'block';
+}
+
+function closeEmailModal() {
+  document.getElementById('email-modal').style.display = 'none';
+}
+
+function handleOverlayClick(e) {
+  if (e.target.classList.contains('modal-overlay')) closeEmailModal();
+}
+
+function toggleEdit() {
+  _editMode = !_editMode;
+  const display = document.getElementById('email-body-display');
+  const edit = document.getElementById('email-body-edit');
+  const btn = document.getElementById('edit-toggle-btn');
+  if (_editMode) {
+    display.style.display = 'none';
+    edit.style.display = '';
+    btn.textContent = 'Done editing';
+    edit.focus();
+  } else {
+    _emailData.body = edit.value;
+    display.textContent = edit.value;
+    display.style.display = '';
+    edit.style.display = 'none';
+    btn.textContent = 'Edit';
+  }
+}
+
+function copyEmail() {
+  const body = _editMode ? document.getElementById('email-body-edit').value : _emailData.body;
+  const text = `Subject: ${_emailData.subject}\n\n${body}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(() => btn.textContent = 'Copy email', 2000);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    document.getElementById('copy-btn').textContent = '✓ Copied!';
+    setTimeout(() => document.getElementById('copy-btn').textContent = 'Copy email', 2000);
+  });
+}
+
+function openMailClient() {
+  const body = _editMode ? document.getElementById('email-body-edit').value : _emailData.body;
+  const url = `mailto:?subject=${encodeURIComponent(_emailData.subject)}&body=${encodeURIComponent(body)}`;
+  window.open(url, '_blank');
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEmailModal(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,220 @@
+[
+  {
+    "id": "big-boys-junk",
+    "name": "Big Boys Junk Removal",
+    "category": "Junk Removal",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "31061",
+      "31062"
+    ],
+    "description": "Full-service junk removal and hauling company based in Milledgeville. Handles furniture, appliances, construction debris, yard waste, and estate cleanouts.",
+    "phone": "(478) 555-0182",
+    "website": "https://bigboysjunk.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$75–$450",
+    "rating": 4.7,
+    "review_count": 94,
+    "services": [
+      "Furniture removal",
+      "Construction debris",
+      "Appliance hauling",
+      "Yard waste removal",
+      "Estate cleanouts",
+      "Single-item pickup"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "georgia-haul-away",
+    "name": "Georgia Haul Away",
+    "category": "Junk Removal",
+    "service_area": [
+      "Milledgeville, GA",
+      "Macon, GA",
+      "Warner Robins, GA",
+      "Baldwin County, GA",
+      "31061"
+    ],
+    "description": "Licensed and insured hauling company serving central Georgia. Specializes in residential and commercial cleanouts, bulk debris, and furniture disposal.",
+    "phone": "(478) 555-0247",
+    "website": "https://georgiahaul.example.com",
+    "address": "Macon, GA 31201",
+    "price_range": "$95–$600",
+    "rating": 4.5,
+    "review_count": 212,
+    "services": [
+      "Residential cleanouts",
+      "Commercial debris",
+      "Furniture disposal",
+      "Mattress removal",
+      "Yard debris",
+      "Construction waste"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "clean-slate-removal",
+    "name": "Clean Slate Property Services",
+    "category": "Junk Removal / Property Cleanup",
+    "service_area": [
+      "Milledgeville, GA",
+      "Sandersville, GA",
+      "Eatonton, GA",
+      "Baldwin County, GA",
+      "31061",
+      "31062"
+    ],
+    "description": "Local property cleanup and junk removal service. Handles hoarding cleanups, foreclosure cleanouts, post-renovation debris, and general property clearing.",
+    "phone": "(478) 555-0319",
+    "website": "https://cleanslatepropertyga.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$100–$800",
+    "rating": 4.8,
+    "review_count": 67,
+    "services": [
+      "Full property cleanouts",
+      "Post-renovation debris",
+      "Foreclosure cleanup",
+      "Hoarding assistance",
+      "Furniture and appliances",
+      "Yard and lot clearing"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "milledgeville-tree-service",
+    "name": "Oconee Tree Service",
+    "category": "Tree Service",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "Putnam County, GA",
+      "31061"
+    ],
+    "description": "ISA-certified arborists serving Milledgeville and surrounding counties. Tree removal, trimming, stump grinding, and storm damage response on private property.",
+    "phone": "(478) 555-0458",
+    "website": "https://ocone-etree.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$150–$2,500",
+    "rating": 4.6,
+    "review_count": 143,
+    "services": [
+      "Tree removal",
+      "Tree trimming",
+      "Stump grinding",
+      "Emergency storm cleanup",
+      "Lot clearing",
+      "Debris removal"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "milledgeville-pest-control",
+    "name": "Baldwin Pest Solutions",
+    "category": "Pest Control",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "31061",
+      "31062"
+    ],
+    "description": "Local pest control and extermination company. Handles ants, roaches, termites, rodents, and wildlife exclusion for residential and commercial properties.",
+    "phone": "(478) 555-0521",
+    "website": "https://baldwinpest.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$85–$350 per treatment",
+    "rating": 4.4,
+    "review_count": 88,
+    "services": [
+      "General pest control",
+      "Termite treatment",
+      "Rodent control",
+      "Wildlife exclusion",
+      "Mosquito treatment",
+      "Bed bug treatment"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "milledgeville-plumbing",
+    "name": "Reliable Plumbing of Milledgeville",
+    "category": "Plumbing",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "31061"
+    ],
+    "description": "Licensed plumbers serving Milledgeville and Baldwin County. Handles repairs, installations, drain cleaning, water heaters, and emergency service.",
+    "phone": "(478) 555-0634",
+    "website": "https://reliableplumbing-mlv.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$95–$500+ depending on job",
+    "rating": 4.5,
+    "review_count": 119,
+    "services": [
+      "Leak repair",
+      "Drain cleaning",
+      "Water heater installation",
+      "Pipe replacement",
+      "Faucet and fixture repair",
+      "Emergency service"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "milledgeville-hvac",
+    "name": "Comfort Zone HVAC",
+    "category": "HVAC",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "31061",
+      "31062"
+    ],
+    "description": "Heating, ventilation, and air conditioning installation, repair, and maintenance for residential properties in Milledgeville.",
+    "phone": "(478) 555-0712",
+    "website": "https://comfortzonehvac.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$95 service call + parts",
+    "rating": 4.6,
+    "review_count": 76,
+    "services": [
+      "AC repair",
+      "Heating repair",
+      "System installation",
+      "Maintenance plans",
+      "Duct cleaning",
+      "Emergency repair"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  },
+  {
+    "id": "milledgeville-lawn",
+    "name": "Green Thumb Lawn Care",
+    "category": "Lawn Care",
+    "service_area": [
+      "Milledgeville, GA",
+      "Baldwin County, GA",
+      "31061",
+      "31062"
+    ],
+    "description": "Full-service lawn care and landscaping for residential properties. Mowing, edging, cleanup, mulching, and seasonal services.",
+    "phone": "(478) 555-0801",
+    "website": "https://greenthumb-mlv.example.com",
+    "address": "Milledgeville, GA 31061",
+    "price_range": "$35–$150 per service",
+    "rating": 4.3,
+    "review_count": 55,
+    "services": [
+      "Lawn mowing",
+      "Edging and trimming",
+      "Leaf cleanup",
+      "Mulching",
+      "Garden bed maintenance",
+      "Seasonal cleanups"
+    ],
+    "note": "PROTOTYPE DATA — contact information is illustrative and not verified"
+  }
+]

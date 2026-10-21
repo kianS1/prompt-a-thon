@@ -1,0 +1,130 @@
+[
+  {
+    "id": "ga-permit-fence",
+    "title": "Do I need a permit to build a fence in Milledgeville?",
+    "jurisdiction": "Milledgeville, GA",
+    "category": "Building Permits",
+    "plain_language_summary": "In Milledgeville, fences over a certain height generally require a building permit. Fences in front yards are subject to height restrictions under the city's zoning ordinance.",
+    "requirements": [
+      "Fences over 6 feet typically require a permit",
+      "Front yard fences are typically limited to 4 feet",
+      "Property line setbacks may apply",
+      "HOA rules may be more restrictive than city rules"
+    ],
+    "next_steps": [
+      "Contact the Building & Zoning Department to confirm current requirements",
+      "Submit a permit application with a site plan showing fence location",
+      "Verify property lines before installation"
+    ],
+    "official_source": "City of Milledgeville Building & Zoning",
+    "contact": {
+      "name": "City of Milledgeville Building & Zoning",
+      "phone": "(478) 414-4025",
+      "email": "zoning@milledgevillega.us",
+      "website": "https://www.milledgevillega.us/departments/planning-zoning"
+    },
+    "disclaimer": "This is general guidance. Verify current requirements directly with the city."
+  },
+  {
+    "id": "ga-permit-shed",
+    "title": "Do I need a permit to build a shed or outbuilding?",
+    "jurisdiction": "Milledgeville, GA",
+    "category": "Building Permits",
+    "plain_language_summary": "Small accessory structures like sheds may require a permit depending on their size. In Georgia, structures over 144 square feet typically require a building permit.",
+    "requirements": [
+      "Structures over 144 sq ft (12x12) typically require a permit in Georgia",
+      "Setback requirements from property lines apply",
+      "Electrical work inside a shed always requires a permit",
+      "Must comply with zoning district rules"
+    ],
+    "next_steps": [
+      "Check with the Building & Zoning Department before starting construction",
+      "Get a site plan showing the proposed structure location",
+      "Apply for a building permit if required"
+    ],
+    "official_source": "City of Milledgeville Building & Zoning / Georgia State Building Code",
+    "contact": {
+      "name": "City of Milledgeville Building & Zoning",
+      "phone": "(478) 414-4025",
+      "email": "zoning@milledgevillega.us",
+      "website": "https://www.milledgevillega.us/departments/planning-zoning"
+    },
+    "disclaimer": "This is general guidance. Verify current requirements directly with the city."
+  },
+  {
+    "id": "ga-noise-ordinance",
+    "title": "What are the noise rules in Milledgeville?",
+    "jurisdiction": "Milledgeville, GA",
+    "category": "Noise Ordinance",
+    "plain_language_summary": "Milledgeville has a noise ordinance that restricts unreasonably loud sounds, particularly during nighttime hours. Violations can be reported to the Police Department.",
+    "requirements": [
+      "Noise that disturbs neighbors is generally prohibited after 10:00 PM and before 7:00 AM",
+      "Construction noise is typically limited to daytime hours on weekdays",
+      "Amplified music and parties are subject to the general noise ordinance"
+    ],
+    "next_steps": [
+      "For an active noise violation, call the non-emergency police line",
+      "For ongoing issues, file a complaint with Code Enforcement"
+    ],
+    "official_source": "City of Milledgeville Municipal Code",
+    "contact": {
+      "name": "Milledgeville Police Department (non-emergency)",
+      "phone": "(478) 414-4090",
+      "email": "police@milledgevillega.us",
+      "website": "https://www.milledgevillega.us/departments/police"
+    },
+    "disclaimer": "This is general guidance. Ordinance specifics may have changed — verify with the city."
+  },
+  {
+    "id": "ga-property-line-dispute",
+    "title": "How do I resolve a property line dispute?",
+    "jurisdiction": "Milledgeville, GA / Georgia",
+    "category": "Property",
+    "plain_language_summary": "Property line disputes are generally civil matters between neighbors and are not resolved by city government. The city cannot legally determine property boundaries — that requires a licensed surveyor.",
+    "requirements": [
+      "The city does not adjudicate property line disputes",
+      "A licensed land surveyor must establish official boundaries",
+      "Georgia law governs property encroachment and adverse possession"
+    ],
+    "next_steps": [
+      "Hire a licensed land surveyor to establish property lines",
+      "Review your deed and any recorded plats",
+      "If the dispute continues, consult a real estate attorney",
+      "Mediation may be available through the local court system"
+    ],
+    "official_source": "Georgia Department of Law / Local Courts",
+    "contact": {
+      "name": "Baldwin County Superior Court",
+      "phone": "(478) 445-4007",
+      "email": null,
+      "website": "https://www.baldwincountyga.com/superior-court"
+    },
+    "disclaimer": "This is informational, not legal advice. Consult an attorney for specific legal matters."
+  },
+  {
+    "id": "ga-short-term-rental",
+    "title": "Can I rent my home on Airbnb or short-term rental platforms?",
+    "jurisdiction": "Milledgeville, GA",
+    "category": "Zoning / Short-Term Rentals",
+    "plain_language_summary": "Short-term rentals (like Airbnb) may require a local business license or special use permit depending on the zoning district. Georgia state law also requires sales tax collection.",
+    "requirements": [
+      "A business license from the City of Milledgeville may be required",
+      "Zoning must allow short-term rentals in your district",
+      "Georgia state sales tax (hotel/motel tax) applies to short-term rentals",
+      "HOA rules may prohibit short-term rentals"
+    ],
+    "next_steps": [
+      "Contact the Planning & Zoning Department to determine if your zone allows short-term rentals",
+      "Apply for a business license if required",
+      "Register with the Georgia Department of Revenue for lodging tax"
+    ],
+    "official_source": "City of Milledgeville Planning & Zoning / Georgia Department of Revenue",
+    "contact": {
+      "name": "City of Milledgeville Planning & Zoning",
+      "phone": "(478) 414-4025",
+      "email": "zoning@milledgevillega.us",
+      "website": "https://www.milledgevillega.us/departments/planning-zoning"
+    },
+    "disclaimer": "Regulations may have changed. Verify current requirements with the city and state."
+  }
+]

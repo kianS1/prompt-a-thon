@@ -1,0 +1,195 @@
+[
+  {
+    "id": "milledgeville-public-works",
+    "name": "City of Milledgeville Public Works",
+    "category": "Public Works",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Responsible for maintaining city roads, sidewalks, drainage systems, and public infrastructure including pothole repairs and road hazard mitigation.",
+    "email": "publicworks@milledgevillega.us",
+    "phone": "(478) 414-4040",
+    "website": "https://www.milledgevillega.us/departments/public-works",
+    "report_url": "https://www.milledgevillega.us/report-an-issue",
+    "address": "1 Franklin Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 8:00 AM – 5:00 PM",
+    "supported_issue_types": [
+      "pothole",
+      "road damage",
+      "road hazard",
+      "sidewalk damage",
+      "drainage issue",
+      "public infrastructure",
+      "street flooding",
+      "guardrail damage",
+      "road cave-in"
+    ],
+    "required_information": [
+      "Exact street address or intersection",
+      "Description of the hazard (size, severity)",
+      "How long the problem has existed",
+      "Photo if available"
+    ]
+  },
+  {
+    "id": "milledgeville-streetlights",
+    "name": "City of Milledgeville Public Works – Street Lighting",
+    "category": "Street Lighting",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Handles reports of broken, flickering, or missing public streetlights throughout Milledgeville.",
+    "email": "publicworks@milledgevillega.us",
+    "phone": "(478) 414-4040",
+    "website": "https://www.milledgevillega.us/departments/public-works",
+    "report_url": "https://www.milledgevillega.us/report-an-issue",
+    "address": "1 Franklin Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 8:00 AM – 5:00 PM",
+    "supported_issue_types": [
+      "broken streetlight",
+      "flickering streetlight",
+      "missing streetlight",
+      "dark intersection",
+      "street lighting outage"
+    ],
+    "required_information": [
+      "Address or intersection near the streetlight",
+      "Pole number if visible",
+      "Description of the issue",
+      "Time of day the issue is most noticeable"
+    ]
+  },
+  {
+    "id": "milledgeville-sanitation",
+    "name": "City of Milledgeville Sanitation Department",
+    "category": "Sanitation",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Manages municipal solid waste collection, missed trash pickups, recycling, and bulk item collection for city residents.",
+    "email": "sanitation@milledgevillega.us",
+    "phone": "(478) 414-4050",
+    "website": "https://www.milledgevillega.us/departments/sanitation",
+    "report_url": "https://www.milledgevillega.us/report-an-issue",
+    "address": "1 Franklin Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 7:00 AM – 4:00 PM",
+    "supported_issue_types": [
+      "missed trash pickup",
+      "missed recycling pickup",
+      "bulk item pickup",
+      "overflowing public trash can",
+      "illegal dumping on public property",
+      "abandoned waste"
+    ],
+    "required_information": [
+      "Service address",
+      "Day of scheduled pickup",
+      "Description of what was missed",
+      "Whether bulk items are involved"
+    ]
+  },
+  {
+    "id": "milledgeville-code-enforcement",
+    "name": "City of Milledgeville Code Enforcement",
+    "category": "Code Enforcement",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Enforces city ordinances related to property maintenance, overgrown vegetation, junk vehicles, illegal dumping on private property, and building code compliance.",
+    "email": "codeenforcement@milledgevillega.us",
+    "phone": "(478) 414-4025",
+    "website": "https://www.milledgevillega.us/departments/code-enforcement",
+    "report_url": "https://www.milledgevillega.us/report-a-violation",
+    "address": "119 E. Hancock Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 8:00 AM – 5:00 PM",
+    "supported_issue_types": [
+      "code violation",
+      "overgrown property",
+      "junk vehicle",
+      "abandoned vehicle on private property",
+      "illegal dumping on private property",
+      "property maintenance violation",
+      "zoning violation",
+      "dilapidated structure"
+    ],
+    "required_information": [
+      "Property address of the violation",
+      "Description of the violation",
+      "How long the issue has been present",
+      "Photos if available"
+    ]
+  },
+  {
+    "id": "milledgeville-police-abandoned-vehicle",
+    "name": "Milledgeville Police Department",
+    "category": "Law Enforcement",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Handles reports of abandoned vehicles on public streets, illegal parking, and vehicles that pose a public safety hazard.",
+    "email": "police@milledgevillega.us",
+    "phone": "(478) 414-4090",
+    "website": "https://www.milledgevillega.us/departments/police",
+    "report_url": null,
+    "address": "390 West Franklin Street, Milledgeville, GA 31061",
+    "hours": "24 hours / 7 days a week",
+    "supported_issue_types": [
+      "abandoned vehicle on public street",
+      "illegally parked vehicle",
+      "vehicle blocking fire hydrant",
+      "vehicle blocking traffic"
+    ],
+    "required_information": [
+      "Vehicle make, model, color",
+      "License plate number if visible",
+      "Location of vehicle",
+      "How long it has been there"
+    ]
+  },
+  {
+    "id": "milledgeville-water-sewer",
+    "name": "City of Milledgeville Water & Sewer Department",
+    "category": "Water & Sewer",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Manages the city's public water supply, sewer system, water main breaks, sewer backups, and utility infrastructure.",
+    "email": "utilities@milledgevillega.us",
+    "phone": "(478) 414-4060",
+    "website": "https://www.milledgevillega.us/departments/utilities",
+    "report_url": "https://www.milledgevillega.us/report-an-issue",
+    "address": "1 Franklin Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 8:00 AM – 5:00 PM; Emergency line 24/7",
+    "supported_issue_types": [
+      "water main break",
+      "sewer backup",
+      "flooding from water main",
+      "no water pressure",
+      "water outage",
+      "sewer overflow",
+      "public water quality concern"
+    ],
+    "required_information": [
+      "Address or intersection where issue is observed",
+      "Description of the problem",
+      "Time the issue began",
+      "Whether water is visible in the street"
+    ]
+  },
+  {
+    "id": "milledgeville-parks",
+    "name": "City of Milledgeville Parks & Recreation",
+    "category": "Parks & Recreation",
+    "jurisdiction": "Milledgeville, GA",
+    "description": "Manages public parks, recreational facilities, public trees, park equipment, and green spaces within city limits.",
+    "email": "parks@milledgevillega.us",
+    "phone": "(478) 414-4080",
+    "website": "https://www.milledgevillega.us/departments/parks",
+    "report_url": "https://www.milledgevillega.us/report-an-issue",
+    "address": "200 West McIntosh Street, Milledgeville, GA 31061",
+    "hours": "Monday–Friday, 8:00 AM – 5:00 PM",
+    "supported_issue_types": [
+      "fallen public tree",
+      "dangerous public tree",
+      "park damage",
+      "broken park equipment",
+      "vandalism in public park",
+      "public bench damage",
+      "playground hazard"
+    ],
+    "required_information": [
+      "Name or address of the park",
+      "Location within the park",
+      "Description of the issue",
+      "Whether there is an immediate safety hazard"
+    ]
+  }
+]
